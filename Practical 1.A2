@@ -1,0 +1,74 @@
+#include <stdio.h>
+
+// Function to display Fibonacci series up to a given limit
+void displayFibonacci(int limit) {
+    int first = 0, second = 1, next;
+
+    printf("Fibonacci Series up to %d terms:\n", limit);
+
+    for (int i = 0; i < limit; ++i) {
+        printf("%d, ", first);
+        next = first + second;
+        first = second;
+        second = next;
+    }
+
+    printf("\n");
+}
+
+int main() {
+    int terms;
+
+    // Input from the user
+    printf("Enter the number of terms for Fibonacci series: ");
+    scanf("%d", &terms);
+
+    // Check for non-negative input
+    if (terms < 0) {
+        printf("Please enter a non-negative number of terms.\n");
+    } else {
+        // Display Fibonacci series
+        displayFibonacci(terms);
+    }
+
+    return 0;
+}
+
+#include <stdio.h>
+
+// Function to calculate Fibonacci series using recursion
+int fibonacciRecursion(int n) {
+    if (n <= 1)
+        return n;
+    else
+        return fibonacciRecursion(n - 1) + fibonacciRecursion(n - 2);
+}
+
+// Function to display Fibonacci series up to a given limit
+void displayFibonacci(int limit) {
+    printf("Fibonacci Series up to %d terms:\n", limit);
+
+    for (int i = 0; i < limit; ++i) {
+        printf("%d ", fibonacciRecursion(i));
+    }
+
+    printf("\n");
+}
+
+int main() {
+    int terms;
+
+    // Input from the user
+    printf("Enter the number of terms for Fibonacci series: ");
+    scanf("%d", &terms);
+
+    // Check for non-negative input
+    if (terms < 0) {
+        printf("Please enter a non-negative number of terms.\n");
+    } else {
+        // Display Fibonacci series
+        displayFibonacci(terms);
+    }
+
+    return 0;
+}
