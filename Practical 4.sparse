@@ -1,0 +1,155 @@
+#include <stdio.h>
+
+#define MAX_ROWS 10
+#define MAX_COLS 10
+
+struct Element {
+    int row;
+    int col;
+    int value;
+};
+
+struct SparseMatrix {
+    int rows;
+    int cols;
+    int numElements;
+    struct Element data[MAX_ROWS * MAX_COLS];
+};
+
+// Function to convert a matrix into sparse form
+void convertToSparse(int matrix[MAX_ROWS][MAX_COLS], struct SparseMatrix *sparse) {
+    sparse->rows = 0;
+    sparse->cols = 0;
+    sparse->numElements = 0;
+
+    // Traverse the original matrix
+    for (int i = 0; i < MAX_ROWS; ++i) {
+        for (int j = 0; j < MAX_COLS; ++j) {
+            if (matrix[i][j] != 0) {
+                sparse->data[sparse->numElements].row = i;
+                sparse->data[sparse->numElements].col = j;
+                sparse->data[sparse->numElements].value = matrix[i][j];
+                sparse->numElements++;
+
+                // Update the size of the sparse matrix
+                if (i >= sparse->rows) {
+                    sparse->rows = i + 1;
+                }
+                if (j >= sparse->cols) {
+                    sparse->cols = j + 1;
+                }
+            }
+        }
+    }
+}
+
+// Function to display a sparse matrix
+void displaySparse(struct SparseMatrix sparse) {
+    printf("Sparse Matrix:\n");
+    for (int i = 0; i < sparse.numElements; ++i) {
+        printf("%d %d %d\n", sparse.data[i].row, sparse.data[i].col, sparse.data[i].value);
+    }
+}
+
+// Function to add two sparse matrices
+void addSparseMatrices(struct SparseMatrix sparse1, struct SparseMatrix sparse2, struct SparseMatrix *result) {
+    int i = 0, j = 0, k = 0;
+
+    while (i < sparse1.numElements && j < sparse2.numElements) {
+        if (sparse1.data[i].row < sparse2.data[j].row ||
+            (sparse1.data[i].row == sparse2.data[j].row && sparse1.data[i].col < sparse2.data[j].col)) {
+            result->data[k++] = sparse1.data[i++];
+        } else if (sparse1.data[i].row > sparse2.data[j].row ||
+                   (sparse1.data[i].row == sparse2.data[j].row && sparse1.data[i].col > sparse2.data[j].col)) {
+            result->data[k++] = sparse2.data[j++];
+        } else {
+            // Add values if the position is the same
+            result->data[k] = sparse1.data[i];
+            result->data[k++].value += sparse2.data[j++].value;
+            i++;
+            j++;
+        }
+    }
+
+    // Copy remaining elements of sparse1, if any
+    while (i < sparse1.numElements) {
+        result->data[k++] = sparse1.data[i++];
+    }
+
+    // Copy remaining elements of sparse2, if any
+    while (j < sparse2.numElements) {
+        result->data[k++] = sparse2.data[j++];
+    }
+
+    result->numElements = k;
+    result->rows = (sparse1.rows > sparse2.rows) ? sparse1.rows : sparse2.rows;
+    result->cols = (sparse1.cols > sparse2.cols) ? sparse1.cols : sparse2.cols;
+}
+
+int main() {
+    int matrix1[MAX_ROWS][MAX_COLS] = {
+        {1, 0, 3, 0},
+        {0, 5, 0, 0},
+        {0, 0, 7, 0},
+        {0, 0, 0, 9}
+    };
+
+    int matrix2[MAX_ROWS][MAX_COLS] = {
+        {0, 2, 0, 0},
+        {0, 0, 0, 8},
+        {0, 0, 6, 0},
+        {0, 0, 0, 0}
+    };
+
+    struct SparseMatrix sparseMatrix1, sparseMatrix2, resultMatrix;
+
+    // Convert matrices to sparse form
+    convertToSparse(matrix1, &sparseMatrix1);
+    convertToSparse(matrix2, &sparseMatrix2);
+
+    // Display the original matrices
+    printf("Original Matrix 1:\n");
+    for (int i = 0; i < sparseMatrix1.rows; ++i) {
+        for (int j = 0; j < sparseMatrix1.cols; ++j) {
+            printf("%d\t", matrix1[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\nOriginal Matrix 2:\n");
+    for (int i = 0; i < sparseMatrix2.rows; ++i) {
+        for (int j = 0; j < sparseMatrix2.cols; ++j) {
+            printf("%d\t", matrix2[i][j]);
+        }
+        printf("\n");
+    }
+
+    // Display the sparse matrices
+    displaySparse(sparseMatrix1);
+    printf("\n");
+    displaySparse(sparseMatrix2);
+
+    // Add two sparse matrices
+    addSparseMatrices(sparseMatrix1, sparseMatrix2, &resultMatrix);
+
+    // Display the result matrix
+    printf("\nResultant Matrix (Sum of Sparse Matrices):\n");
+    for (int i = 0; i < resultMatrix.rows; ++i) {
+        for (int j = 0; j < resultMatrix.cols; ++j) {
+            int found = 0;
+            for (int k = 0; k < resultMatrix.numElements; ++k) {
+                if (resultMatrix.data[k].row == i && resultMatrix.data[k].col == j) {
+                    printf("%d\t", resultMatrix.data[k].value);
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                printf("0\t");
+            }
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
