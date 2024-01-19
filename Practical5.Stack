@@ -1,0 +1,142 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX 5
+
+struct Stack {
+    int items[MAX];
+    int top;
+};
+
+// Function prototypes
+void initialize(struct Stack *s);
+void push(struct Stack *s, int value);
+int pop(struct Stack *s);
+bool isFull(struct Stack *s);
+bool isEmpty(struct Stack *s);
+void checkPalindrome(struct Stack *s);
+void displayStatus(struct Stack *s);
+
+int main() {
+    struct Stack stack;
+    initialize(&stack);
+
+    int choice, value;
+
+    do {
+        printf("\n----- Stack Menu -----\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Check Palindrome\n");
+        printf("4. Display Stack Status\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the element to push: ");
+                scanf("%d", &value);
+                push(&stack, value);
+                break;
+
+            case 2:
+                if (!isEmpty(&stack)) {
+                    value = pop(&stack);
+                    printf("Popped element: %d\n", value);
+                } else {
+                    printf("Stack is empty. Cannot pop.\n");
+                }
+                break;
+
+            case 3:
+                checkPalindrome(&stack);
+                break;
+
+            case 4:
+                displayStatus(&stack);
+                break;
+
+            case 5:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
+
+// Function to initialize the stack
+void initialize(struct Stack *s) {
+    s->top = -1;
+}
+
+// Function to push an element onto the stack
+void push(struct Stack *s, int value) {
+    if (isFull(s)) {
+        printf("Stack overflow. Cannot push %d.\n", value);
+    } else {
+        s->items[++s->top] = value;
+        printf("%d pushed onto the stack.\n", value);
+    }
+}
+
+// Function to pop an element from the stack
+int pop(struct Stack *s) {
+    return s->items[s->top--];
+}
+
+// Function to check if the stack is full
+bool isFull(struct Stack *s) {
+    return s->top == MAX - 1;
+}
+
+// Function to check if the stack is empty
+bool isEmpty(struct Stack *s) {
+    return s->top == -1;
+}
+
+// Function to check if a string is a palindrome using a stack
+void checkPalindrome(struct Stack *s) {
+    char str[MAX];
+    printf("Enter a string to check palindrome: ");
+    scanf("%s", str);
+
+    initialize(s);
+
+    // Push characters onto the stack
+    for (int i = 0; str[i] != '\0'; i++) {
+        push(s, str[i]);
+    }
+
+    // Check palindrome by popping characters from the stack
+    bool isPalindrome = true;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (pop(s) != str[i]) {
+            isPalindrome = false;
+            break;
+        }
+    }
+
+    if (isPalindrome) {
+        printf("The string is a palindrome.\n");
+    } else {
+        printf("The string is not a palindrome.\n");
+    }
+}
+
+// Function to display the status of the stack
+void displayStatus(struct Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty.\n");
+    } else if (isFull(s)) {
+        printf("Stack is full.\n");
+    } else {
+        printf("Stack is not full.\n");
+    }
+}
