@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+// Union to store details
+union MyDetails {
+    char name[50];
+    int age;
+    char presentAddress[100];
+};
+
+int main() {
+    // Declare a union variable
+    union MyDetails details;
+
+    // Assign values to the union members
+    printf("Enter your name: ");
+    scanf("%s", details.name);
+
+    printf("Enter your age: ");
+    scanf("%d", &details.age);
+
+    printf("Enter your present address: ");
+    scanf("%s", details.presentAddress);
+
+    // Display the present address
+    printf("\nPresent Address:\n%s\n", details.presentAddress);
+
+    return 0;
+}
