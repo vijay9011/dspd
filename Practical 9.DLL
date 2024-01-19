@@ -1,0 +1,292 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define structure for employee data
+struct Employee {
+    char ssn[15];
+    char name[50];
+    char department[20];
+    char designation[20];
+    float salary;
+    long phoneNo;
+    struct Employee *prev;
+    struct Employee *next;
+};
+
+// Function prototypes
+struct Employee* createEmployee(char ssn[], char name[], char department[], char designation[], float salary, long phoneNo);
+struct Employee* endInsert(struct Employee *head, struct Employee *newEmployee);
+void displayDLL(struct Employee *head);
+int countNodes(struct Employee *head);
+struct Employee* insertAtEnd(struct Employee *head, struct Employee *newEmployee);
+struct Employee* deleteAtEnd(struct Employee *head);
+struct Employee* insertAtFront(struct Employee *head, struct Employee *newEmployee);
+struct Employee* deleteAtFront(struct Employee *head);
+
+int main() {
+    struct Employee *head = NULL;
+    int choice;
+    char ssn[15], name[50], department[20], designation[20];
+    float salary;
+    long phoneNo;
+
+    do {
+        printf("\n----- Employee Data Menu -----\n");
+        printf("1. Create a DLL of N Employees (End Insertion)\n");
+        printf("2. Display DLL Status and Count\n");
+        printf("3. Insert at End\n");
+        printf("4. Delete at End\n");
+        printf("5. Insert at Front\n");
+        printf("6. Delete at Front\n");
+        printf("7. Demonstrate DLL as Double Ended Queue\n");
+        printf("8. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the number of employees to create: ");
+                int n;
+                scanf("%d", &n);
+
+                for (int i = 0; i < n; ++i) {
+                    printf("Enter details for employee %d:\n", i + 1);
+                    printf("SSN: ");
+                    scanf("%s", ssn);
+                    printf("Name: ");
+                    scanf("%s", name);
+                    printf("Department: ");
+                    scanf("%s", department);
+                    printf("Designation: ");
+                    scanf("%s", designation);
+                    printf("Salary: ");
+                    scanf("%f", &salary);
+                    printf("Phone No.: ");
+                    scanf("%ld", &phoneNo);
+
+                    struct Employee *newEmployee = createEmployee(ssn, name, department, designation, salary, phoneNo);
+                    head = endInsert(head, newEmployee);
+                }
+                break;
+
+            case 2:
+                displayDLL(head);
+                int count = countNodes(head);
+                printf("Number of nodes in the DLL: %d\n", count);
+                break;
+
+            case 3:
+                printf("Enter details to insert at end:\n");
+                printf("SSN: ");
+                scanf("%s", ssn);
+                printf("Name: ");
+                scanf("%s", name);
+                printf("Department: ");
+                scanf("%s", department);
+                printf("Designation: ");
+                scanf("%s", designation);
+                printf("Salary: ");
+                scanf("%f", &salary);
+                printf("Phone No.: ");
+                scanf("%ld", &phoneNo);
+
+                struct Employee *newEndEmployee = createEmployee(ssn, name, department, designation, salary, phoneNo);
+                head = insertAtEnd(head, newEndEmployee);
+                break;
+
+            case 4:
+                if (head != NULL) {
+                    head = deleteAtEnd(head);
+                    printf("Deleted employee from end.\n");
+                } else {
+                    printf("DLL is empty. Cannot delete from end.\n");
+                }
+                break;
+
+            case 5:
+                printf("Enter details to insert at front:\n");
+                printf("SSN: ");
+                scanf("%s", ssn);
+                printf("Name: ");
+                scanf("%s", name);
+                printf("Department: ");
+                scanf("%s", department);
+                printf("Designation: ");
+                scanf("%s", designation);
+                printf("Salary: ");
+                scanf("%f", &salary);
+                printf("Phone No.: ");
+                scanf("%ld", &phoneNo);
+
+                struct Employee *newFrontEmployee = createEmployee(ssn, name, department, designation, salary, phoneNo);
+                head = insertAtFront(head, newFrontEmployee);
+                break;
+
+            case 6:
+                if (head != NULL) {
+                    head = deleteAtFront(head);
+                    printf("Deleted employee from front.\n");
+                } else {
+                    printf("DLL is empty. Cannot delete from front.\n");
+                }
+                break;
+
+            case 7:
+                // Demonstrate DLL as Double Ended Queue
+                printf("Demonstrating DLL as Double Ended Queue:\n");
+
+                // Enqueue elements at the rear
+                printf("Enqueue at rear:\n");
+                struct Employee *rearEmployee1 = createEmployee("SSN1", "John", "HR", "Manager", 50000, 1234567890);
+                head = insertAtEnd(head, rearEmployee1);
+                struct Employee *rearEmployee2 = createEmployee("SSN2", "Jane", "IT", "Developer", 60000, 9876543210);
+                head = insertAtEnd(head, rearEmployee2);
+
+                // Display the DLL after rear enqueue
+                displayDLL(head);
+
+                // Dequeue elements from the front
+                printf("Dequeue from front:\n");
+                head = deleteAtFront(head);
+                head = deleteAtFront(head);
+
+                // Display the DLL after front dequeue
+                displayDLL(head);
+                break;
+
+            case 8:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 8);
+
+    return 0;
+}
+
+// Function to create a new employee
+struct Employee* createEmployee(char ssn[], char name[], char department[], char designation[], float salary, long phoneNo) {
+    struct Employee *newEmployee = (struct Employee*)malloc(sizeof(struct Employee));
+    if (newEmployee == NULL) {
+        printf("Memory allocation error.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(newEmployee->ssn, ssn);
+    strcpy(newEmployee->name, name);
+    strcpy(newEmployee->department, department);
+    strcpy(newEmployee->designation, designation);
+    newEmployee->salary = salary;
+    newEmployee->phoneNo = phoneNo;
+    newEmployee->prev = NULL;
+    newEmployee->next = NULL;
+
+    return newEmployee;
+}
+
+// Function to perform end insertion in the DLL
+struct Employee* endInsert(struct Employee *head, struct Employee *newEmployee) {
+    if (head == NULL) {
+        return newEmployee;
+    }
+
+    struct Employee *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = newEmployee;
+    newEmployee->prev = current;
+    return head;
+}
+
+// Function to display the DLL
+void displayDLL(struct Employee *head) {
+    printf("\n----- Employee Data -----\n");
+    struct Employee *current = head;
+
+    while (current != NULL) {
+        printf("SSN: %s\n", current->ssn);
+        printf("Name: %s\n", current->name);
+        printf("Department: %s\n", current->department);
+        printf("Designation: %s\n", current->designation);
+        printf("Salary: %.2f\n", current->salary);
+        printf("Phone No.: %ld\n", current->phoneNo);
+        printf("-------------------------\n");
+
+        current = current->next;
+    }
+}
+
+// Function to count the number of nodes in the DLL
+int countNodes(struct Employee *head) {
+    int count = 0;
+    struct Employee *current = head;
+
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    return count;
+}
+
+// Function to insert an employee at the end of the DLL
+struct Employee* insertAtEnd(struct Employee *head, struct Employee *newEmployee) {
+    if (head == NULL) {
+        return newEmployee;
+    }
+
+    struct Employee *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = newEmployee;
+    newEmployee->prev = current;
+    return head;
+}
+
+// Function to delete an employee from the end of the DLL
+struct Employee* deleteAtEnd(struct Employee *head) {
+    if (head == NULL || head->next == NULL) {
+        free(head);
+        return NULL;
+    }
+
+    struct Employee *current = head;
+    struct Employee *prev = NULL;
+
+    while (current->next != NULL) {
+        prev = current;
+        current = current->next;
+    }
+
+    free(current);
+    prev->next = NULL;
+    return head;
+}
+
+// Function to insert an employee at the front of the DLL
+struct Employee* insertAtFront(struct Employee *head, struct Employee *newEmployee) {
+    newEmployee->next = head;
+    head->prev = newEmployee;
+    return newEmployee;
+}
+
+// Function to delete an employee from the front of the DLL
+struct Employee* deleteAtFront(struct Employee *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    struct Employee *temp = head;
+    head = head->next;
+    head->prev = NULL;
+    free(temp);
+    return head;
+}
