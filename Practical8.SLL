@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define structure for student data
+struct Student {
+    char usn[15];
+    char name[50];
+    char branch[20];
+    int semester;
+    long phoneNo;
+    struct Student *next;
+};
+
+// Function prototypes
+struct Student* createStudent(char usn[], char name[], char branch[], int semester, long phoneNo);
+struct Student* frontInsert(struct Student *head, struct Student *newStudent);
+void displaySLL(struct Student *head);
+int countNodes(struct Student *head);
+struct Student* insertAtEnd(struct Student *head, struct Student *newStudent);
+struct Student* deleteAtEnd(struct Student *head);
+struct Student* insertAtFront(struct Student *head, struct Student *newStudent);
+struct Student* deleteAtFront(struct Student *head);
+
+int main() {
+    struct Student *head = NULL;
+    int choice, semester, count;
+    char usn[15], name[50], branch[20];
+    long phoneNo;
+
+    do {
+        printf("\n----- Student Data Menu -----\n");
+        printf("1. Create a SLL of N students (Front Insertion)\n");
+        printf("2. Display SLL Status and Count\n");
+        printf("3. Insert at End\n");
+        printf("4. Delete at End\n");
+        printf("5. Insert at Front\n");
+        printf("6. Delete at Front\n");
+        printf("7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the number of students to create: ");
+                int n;
+                scanf("%d", &n);
+
+                for (int i = 0; i < n; ++i) {
+                    printf("Enter details for student %d:\n", i + 1);
+                    printf("USN: ");
+                    scanf("%s", usn);
+                    printf("Name: ");
+                    scanf("%s", name);
+                    printf("Branch: ");
+                    scanf("%s", branch);
+                    printf("Semester: ");
+                    scanf("%d", &semester);
+                    printf("Phone No.: ");
+                    scanf("%ld", &phoneNo);
+
+                    struct Student *newStudent = createStudent(usn, name, branch, semester, phoneNo);
+                    head = frontInsert(head, newStudent);
+                }
+                break;
+
+            case 2:
+                displaySLL(head);
+                count = countNodes(head);
+                printf("Number of nodes in the SLL: %d\n", count);
+                break;
+
+            case 3:
+                printf("Enter details to insert at end:\n");
+                printf("USN: ");
+                scanf("%s", usn);
+                printf("Name: ");
+                scanf("%s", name);
+                printf("Branch: ");
+                scanf("%s", branch);
+                printf("Semester: ");
+                scanf("%d", &semester);
+                printf("Phone No.: ");
+                scanf("%ld", &phoneNo);
+
+                struct Student *newEndStudent = createStudent(usn, name, branch, semester, phoneNo);
+                head = insertAtEnd(head, newEndStudent);
+                break;
+
+            case 4:
+                if (head != NULL) {
+                    head = deleteAtEnd(head);
+                    printf("Deleted student from end.\n");
+                } else {
+                    printf("SLL is empty. Cannot delete from end.\n");
+                }
+                break;
+
+            case 5:
+                printf("Enter details to insert at front:\n");
+                printf("USN: ");
+                scanf("%s", usn);
+                printf("Name: ");
+                scanf("%s", name);
+                printf("Branch: ");
+                scanf("%s", branch);
+                printf("Semester: ");
+                scanf("%d", &semester);
+                printf("Phone No.: ");
+                scanf("%ld", &phoneNo);
+
+                struct Student *newFrontStudent = createStudent(usn, name, branch, semester, phoneNo);
+                head = insertAtFront(head, newFrontStudent);
+                break;
+
+            case 6:
+                if (head != NULL) {
+                    head = deleteAtFront(head);
+                    printf("Deleted student from front.\n");
+                } else {
+                    printf("SLL is empty. Cannot delete from front.\n");
+                }
+                break;
+
+            case 7:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 7);
+
+    return 0;
+}
+
+// Function to create a new student
+struct Student* createStudent(char usn[], char name[], char branch[], int semester, long phoneNo) {
+    struct Student *newStudent = (struct Student*)malloc(sizeof(struct Student));
+    if (newStudent == NULL) {
+        printf("Memory allocation error.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(newStudent->usn, usn);
+    strcpy(newStudent->name, name);
+    strcpy(newStudent->branch, branch);
+    newStudent->semester = semester;
+    newStudent->phoneNo = phoneNo;
+    newStudent->next = NULL;
+
+    return newStudent;
+}
+
+// Function to perform front insertion in the SLL
+struct Student* frontInsert(struct Student *head, struct Student *newStudent) {
+    newStudent->next = head;
+    return newStudent;
+}
+
+// Function to display the SLL
+void displaySLL(struct Student *head) {
+    printf("\n----- Student Data -----\n");
+    struct Student *current = head;
+
+    while (current != NULL) {
+        printf("USN: %s\n", current->usn);
+        printf("Name: %s\n", current->name);
+        printf("Branch: %s\n", current->branch);
+        printf("Semester: %d\n", current->semester);
+        printf("Phone No.: %ld\n", current->phone
