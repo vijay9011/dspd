@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 5
+
+struct Queue {
+    char items[MAX];
+    int front;
+    int rear;
+};
+
+// Function prototypes
+void initialize(struct Queue *q);
+void enqueue(struct Queue *q, char value);
+char dequeue(struct Queue *q);
+bool isFull(struct Queue *q);
+bool isEmpty(struct Queue *q);
+void displayState(struct Queue *q);
+
+int main() {
+    struct Queue queue;
+    initialize(&queue);
+
+    int choice;
+    char value;
+
+    do {
+        printf("\n----- Queue Menu -----\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display Queue State\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the element to enqueue: ");
+                scanf(" %c", &value);
+                enqueue(&queue, value);
+                break;
+
+            case 2:
+                if (!isEmpty(&queue)) {
+                    value = dequeue(&queue);
+                    printf("Dequeued element: %c\n", value);
+                } else {
+                    printf("Queue is empty. Cannot dequeue.\n");
+                }
+                break;
+
+            case 3:
+                displayState(&queue);
+                break;
+
+            case 4:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
+
+// Function to initialize the queue
+void initialize(struct Queue *q) {
+    q->front = -1;
+    q->rear = -1;
+}
+
+// Function to enqueue an element into the queue
+void enqueue(struct Queue *q, char value) {
+    if (isFull(q)) {
+        printf("Queue overflow. Cannot enqueue %c.\n", value);
+    } else {
+        if (isEmpty(q)) {
+            q->front = 0;  // If the queue is initially empty, set front to 0
+        }
+        q->items[++q->rear] = value;
+        printf("%c enqueued into the queue.\n", value);
+    }
+}
+
+// Function to dequeue an element from the queue
+char dequeue(struct Queue *q) {
+    char value = q->items[q->front];
+    if (q->front == q->rear) {
+        // If the queue has only one element, reset front and rear
+        initialize(q);
+    } else {
+        q->front++;
+    }
+    return value;
+}
+
+// Function to check if the queue is full
+bool isFull(struct Queue *q) {
+    return q->rear == MAX - 1;
+}
+
+// Function to check if the queue is empty
+bool isEmpty(struct Queue *q) {
+    return q->front == -1 && q->rear == -1;
+}
+
+// Function to display the state of the queue
+void displayState(struct Queue *q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty.\n");
+    } else if (isFull(q)) {
+        printf("Queue is full.\n");
+    } else {
+        printf("Queue is not full.\n");
+    }
+}
