@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 5
+
+struct Deque {
+    int items[MAX];
+    int front;
+    int rear;
+};
+
+// Function prototypes
+void initialize(struct Deque *dq);
+void insertFront(struct Deque *dq, int value);
+void deleteFront(struct Deque *dq);
+void insertRear(struct Deque *dq, int value);
+void deleteRear(struct Deque *dq);
+bool isFull(struct Deque *dq);
+bool isEmpty(struct Deque *dq);
+void displayDeque(struct Deque *dq);
+
+int main() {
+    struct Deque deque;
+    initialize(&deque);
+
+    int choice, value;
+
+    do {
+        printf("\n----- Deque Menu -----\n");
+        printf("1. Insert at Front\n");
+        printf("2. Delete from Front\n");
+        printf("3. Insert at Rear\n");
+        printf("4. Delete from Rear\n");
+        printf("5. Display Deque\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the element to insert at front: ");
+                scanf("%d", &value);
+                insertFront(&deque, value);
+                break;
+
+            case 2:
+                if (!isEmpty(&deque)) {
+                    deleteFront(&deque);
+                    printf("Deleted element from front.\n");
+                } else {
+                    printf("Deque is empty. Cannot delete from front.\n");
+                }
+                break;
+
+            case 3:
+                printf("Enter the element to insert at rear: ");
+                scanf("%d", &value);
+                insertRear(&deque, value);
+                break;
+
+            case 4:
+                if (!isEmpty(&deque)) {
+                    deleteRear(&deque);
+                    printf("Deleted element from rear.\n");
+                } else {
+                    printf("Deque is empty. Cannot delete from rear.\n");
+                }
+                break;
+
+            case 5:
+                displayDeque(&deque);
+                break;
+
+            case 6:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 6);
+
+    return 0;
+}
+
+// Function to initialize the deque
+void initialize(struct Deque *dq) {
+    dq->front = -1;
+    dq->rear = -1;
+}
+
+// Function to insert an element at the front of the deque
+void insertFront(struct Deque *dq, int value) {
+    if (isFull(dq)) {
+        printf("Deque overflow. Cannot insert at front.\n");
+    } else {
+        if (isEmpty(dq)) {
+            dq->front = 0;
+            dq->rear = 0;
+        } else if (dq->front == 0) {
+            dq->front = MAX - 1;
+        } else {
+            dq->front--;
+        }
+        dq->items[dq->front] = value;
+        printf("%d inserted at the front of the deque.\n", value);
+    }
+}
+
+// Function to delete an element from the front of the deque
+void deleteFront(struct Deque *dq) {
+    if (dq->front == dq->rear) {
+        // Only one element in the deque
+        initialize(dq);
+    } else {
+        if (dq->front == MAX - 1) {
+            dq->front = 0;
+        } else {
+            dq->front++;
+        }
+    }
+}
+
+// Function to insert an element at the rear of the deque
+void insertRear(struct Deque *dq, int value) {
+    if (isFull(dq)) {
+        printf("Deque overflow. Cannot insert at rear.\n");
+    } else {
+        if (isEmpty(dq)) {
+            dq->front = 0;
+            dq->rear = 0;
+        } else if (dq->rear == MAX - 1) {
+            dq->rear = 0;
+        } else {
+            dq->rear++;
+        }
+        dq->items[dq->rear] = value;
+        printf("%d inserted at the rear of the deque.\n", value);
+    }
+}
+
+// Function to delete an element from the rear of the deque
+void deleteRear(struct Deque *dq) {
+    if (dq->front == dq->rear) {
+        // Only one element in the deque
+        initialize(dq);
+    } else {
+        if (dq->rear == 0) {
+            dq->rear = MAX - 1;
+        } else {
+            dq->rear--;
+        }
+    }
+}
+
+// Function to check if the deque is full
+bool isFull(struct Deque *dq) {
+    return (dq->front == 0 && dq->rear == MAX - 1) || (dq->front == dq->rear + 1);
+}
+
+// Function to check if the deque is empty
+bool isEmpty(struct Deque *dq) {
+    return dq->front == -1 && dq->rear == -1;
+}
+
+// Function to display the elements of the deque
+void displayDeque(struct Deque *dq) {
+    if (isEmpty
