@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define structure for a node in the circular linked list
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function prototypes
+struct Node* createNode(int data);
+int countNodes(struct Node* head);
+struct Node* insertNode(struct Node* head, int data);
+struct Node* deleteNode(struct Node* head, int data);
+
+int main() {
+    struct Node* head = NULL;
+    int choice, data;
+
+    do {
+        printf("\n----- Circular Linked List Menu -----\n");
+        printf("1. Count the number of nodes\n");
+        printf("2. Insert a node\n");
+        printf("3. Delete a node\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Number of nodes in the circular linked list: %d\n", countNodes(head));
+                break;
+
+            case 2:
+                printf("Enter data for the new node: ");
+                scanf("%d", &data);
+                head = insertNode(head, data);
+                printf("Node with data %d inserted.\n", data);
+                break;
+
+            case 3:
+                if (head != NULL) {
+                    printf("Enter data to delete from the circular linked list: ");
+                    scanf("%d", &data);
+                    head = deleteNode(head, data);
+                    printf("Node with data %d deleted.\n", data);
+                } else {
+                    printf("Circular linked list is empty. Cannot delete.\n");
+                }
+                break;
+
+            case 4:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation error.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->data = data;
+    newNode->next = NULL;
+
+    return newNode;
+}
+
+// Function to count the number of nodes in the circular linked list
+int countNodes(struct Node* head) {
+    if (head == NULL) {
+        return 0;
+    }
+
+    int count = 1;
+    struct Node* current = head->next;
+
+    while (current != NULL && current != head) {
+        count++;
+        current = current->next;
+    }
+
+    return count;
+}
+
+// Function to insert a node into the circular linked list
+struct Node* insertNode(struct Node* head, int data) {
+    struct Node* newNode = createNode(data);
+
+    if (head == NULL) {
+        // If the list is empty, the new node becomes the head
+        newNode->next = newNode;
+        return newNode;
+    } else {
+        // Insert the new node at the end
+        struct Node* current = head;
+        while (current->next != head) {
+            current = current->next;
+        }
+
+        current->next = newNode;
+        newNode->next = head;
+        return head;
+    }
+}
+
+// Function to delete a node from the circular linked list
+struct Node* deleteNode(struct Node* head, int data) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    struct Node* current = head;
+    struct Node* prev = NULL;
+
+    // Find the node to delete
+    while (current->data != data) {
+        if (current->next == head) {
+            // The node with the given data is not found
+            printf("Node with data %d not found.\n", data);
+            return head;
+        }
+        prev = current;
+        current = current->next;
+    }
+
+    // Adjust pointers to delete the node
+    if (prev != NULL) {
+        prev->next = current->next;
+    } else {
+        // If the head node is deleted, update the head
+        head = current->next;
+    }
+
+    // Free the memory of the deleted node
+    free(current);
+
+    return head;
+}
